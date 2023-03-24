@@ -59,11 +59,17 @@ const getByCustomer = async (req, res) => {
 };
 
 const getByStatus = async (req, res) => {
+  const {s, startDate, endDate} = req.query;
+  let orders;
   try {
-    const orders = await Order.getByStatus(req.params.status);
+    if (startDate && endDate) {
+      orders = await Order.getByStatusAndDate(startDate, endDate,s);
+    } else {
+      orders = await Order.getByStatus(s);
+    }
     res.send(orders);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({message: "No orders matching provided status."});
   }
 };
 

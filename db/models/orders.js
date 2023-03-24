@@ -79,7 +79,17 @@ const remove = async (id) => {
 
 const getByStatus = async (status) => {
   const orders = await Order.find({ status }).populate("items");
-  return orders;
+  if (orders.length >= 1) return orders;
+  throw new Error();
+};
+const getByStatusAndDate = async (startDate, endDate, status) => {
+  const orders = await Order.find({ status })
+    .where("createdAt")
+    .gte(startDate)
+    .lte(endDate)
+    .populate("items");
+  if (orders.length >= 1) return orders;
+  throw new Error();
 };
 
 const totalSales = async () => {
@@ -92,6 +102,16 @@ const totalSalesByDate = async (startDate, endDate) => {
   return doc;
 };
 
+const status = async (s) => {
+  const doc = await Order.find().where("status").equals(s);
+  return doc;
+};
+
+const statusByDate = async (startDate, endDate, s) => {
+  const doc = await Order.find().where("status").equals(s);
+  return doc;
+};
+
 module.exports = {
   getAll,
   getOne,
@@ -99,7 +119,10 @@ module.exports = {
   update,
   remove,
   getByStatus,
+  getByStatusAndDate,
   totalSales,
   totalSalesByDate,
+  status,
+  statusByDate,
   Order
 };
