@@ -78,18 +78,11 @@ const deleteItem = async (id) => {
 };
 
 const search = async (query) => {
-  const param = new RegExp(query, "g");
-  const doc = await MenuItems.find({
-    $or: [
-      {
-        name: param
-      },
-      {
-        description: param
-      }
-    ]
-  });
-  if (doc.length > 1) return doc;
+  const param = new RegExp(query, "ig");
+  const doc = await MenuItems.find().where(
+    { description: param } || { name: param }
+  );
+  if (doc.length >= 1) return doc;
   console.log("No objects fit search parameters");
   throw new Error("No objects fit search parameters");
 };
