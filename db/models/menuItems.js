@@ -63,4 +63,13 @@ const updateItem = async (id, updatedBody) => {
   }
 };
 
-module.exports = { getAll, getOne, create, updateItem, MenuItems };
+const deleteItem = async (id) => {
+  try {
+    const doc = await MenuItems.findByIdAndDelete(id);
+    return doc.id;
+  } catch (error) {
+    console.log("error is", error)
+    throw error;
+}}
+
+module.exports = { getAll, getOne, create, updateItem, deleteItem, MenuItems };
