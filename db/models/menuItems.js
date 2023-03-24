@@ -1,23 +1,26 @@
 const mongoose = require("../db.js");
 
-const menuItemsSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true
+const menuItemsSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    price: {
+      type: Number,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    },
+    imageUrl: {
+      type: String
+    }
   },
-  price: {
-    type: Number,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  imageUrl: {
-    type: String
-  }
-}, { timestamps: { createdAt: "created_at" } });
+  { timestamps: { createdAt: "created_at" } }
+);
 menuItemsSchema.set("toJSON", {
   virtuals: true
 });
@@ -54,11 +57,12 @@ const create = async (body) => {
 const updateItem = async (id, updatedBody) => {
   try {
     const doc = await MenuItems.findByIdAndUpdate(id, updatedBody, {
-      new: true, timestamps: true
+      new: true,
+      timestamps: true
     });
     return doc;
   } catch (error) {
-    console.log("error is", error)
+    console.log("error is", error);
     throw error;
   }
 };
@@ -68,8 +72,34 @@ const deleteItem = async (id) => {
     const doc = await MenuItems.findByIdAndDelete(id);
     return doc.id;
   } catch (error) {
-    console.log("error is", error)
+    console.log("error is", error);
     throw error;
-}}
+  }
+};
 
-module.exports = { getAll, getOne, create, updateItem, deleteItem, MenuItems };
+const search = async (query) => {
+  const param = new RegExp(query, "g");
+  const doc = await MenuItems.find({
+    $or: [
+      {
+        name: param
+      },
+      {
+        description: param
+      }
+    ]
+  });
+  if (doc.length > 1) return doc;
+  console.log("No objects fit search parameters");
+  throw new Error("No objects fit search parameters");
+};
+
+module.exports = {
+  getAll,
+  getOne,
+  create,
+  updateItem,
+  deleteItem,
+  search,
+  MenuItems
+};
