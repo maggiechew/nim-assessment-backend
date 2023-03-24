@@ -179,7 +179,12 @@ const preload = async () => {
   );
   // eslint-disable-next-line no-console
   console.log("createdOrders", createdOrders);
-  process.exit(0);
+  if (require.main === module) process.exit(0);
 };
+// if this file is run directly, run the preload function
+if (require.main === module) {
+  preload();
+}
+// otherwise, export the preload function
+module.exports = preload;
 
-preload();
