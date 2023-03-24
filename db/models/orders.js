@@ -82,6 +82,16 @@ const getByStatus = async (status) => {
   return orders;
 };
 
+const totalSales = async () => {
+  const total = await Order.countDocuments();
+  return total;
+};
+
+const totalSalesByDate = async (startDate, endDate) => {
+  const doc = await Order.find().where("createdAt").gte(startDate).lte(endDate);
+  return doc;
+};
+
 module.exports = {
   getAll,
   getOne,
@@ -89,5 +99,7 @@ module.exports = {
   update,
   remove,
   getByStatus,
+  totalSales,
+  totalSalesByDate,
   Order
 };
