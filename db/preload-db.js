@@ -1,4 +1,5 @@
 require("dotenv").config();
+const mongoose = require("./db");
 
 const { create: createMenuItem } = require("./models/menuItems");
 const { create: createOrder } = require("./models/orders");
@@ -58,6 +59,8 @@ const menuItems = [
 ];
 
 const preload = async () => {
+  await mongoose.connection.collections.menuitems.drop();
+  await mongoose.connection.collections.orders.drop();
   const createdMenuItems = await Promise.all(
     menuItems.map((item) => createMenuItem(item))
   );
@@ -174,12 +177,17 @@ const preload = async () => {
     }
   ];
 
+  // eslint-disable-next-line no-unused-vars
   const createdOrders = await Promise.all(
     orders.map((order) => createOrder(order))
   );
   // eslint-disable-next-line no-console
-  console.log("createdOrders", createdOrders);
-  process.exit(0);
+  // console.log("createdOrders", createdOrders);
+  if (require.main === module) process.exit(0);
 };
-
-preload();
+// if this file is run directly, run the preload function
+if (require.main === module) {
+  preload();
+}
+// otherwise, export the preload function
+module.exports = preload;

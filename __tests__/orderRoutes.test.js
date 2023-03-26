@@ -28,7 +28,7 @@ describe("routes", () => {
       address: "123 test st",
       items: [
         {
-          menuItem: testMenuItemId,
+          item: testMenuItemId,
           quantity: 1
         }
       ]
@@ -85,7 +85,7 @@ describe("routes", () => {
   });
 
   // total sales route
-  describe("GET /api/order/total-sales", () => {
+  describe("GET /api/orders/total-sales", () => {
     it("should return the total sales and have the correct total", async () => {
       await Order.create(testOrder);
       const response = await request(server).get("/api/orders/total-sales");
@@ -95,10 +95,12 @@ describe("routes", () => {
   });
 
   // order by status route
-  describe("GET /api/order/status/:status", () => {
+  describe("GET /api/order/status?s=status", () => {
     it("should return an array of orders with the correct status", async () => {
       await Order.create(testOrder);
-      const response = await request(server).get("/api/orders/status/pending");
+      const response = await request(server).get(
+        "/api/orders/status?s=pending"
+      );
       expect(response.body).toBeInstanceOf(Array);
       expect(response.body[0].status).toBe("pending");
     });

@@ -1,4 +1,7 @@
 const mongoose = require("../db.js");
+const getLogger = require("../../logger");
+
+const logger = getLogger("db");
 
 const menuItemsSchema = new mongoose.Schema(
   {
@@ -62,7 +65,7 @@ const updateItem = async (id, updatedBody) => {
     });
     return doc;
   } catch (error) {
-    console.log("error is", error);
+    logger.log("error is", error);
     throw error;
   }
 };
@@ -72,7 +75,7 @@ const deleteItem = async (id) => {
     const doc = await MenuItems.findByIdAndDelete(id);
     return doc.id;
   } catch (error) {
-    console.log("error is", error);
+    logger.log("error is", error);
     throw error;
   }
 };
@@ -83,7 +86,7 @@ const search = async (query) => {
     { description: param } || { name: param }
   );
   if (doc.length >= 1) return doc;
-  console.log("No objects fit search parameters");
+  logger.log("No objects fit search parameters");
   throw new Error("No objects fit search parameters");
 };
 

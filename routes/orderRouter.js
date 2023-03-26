@@ -3,10 +3,12 @@ const orderController = require("../controllers/orderController");
 
 const orderRouter = Router();
 
-orderRouter.get("/", orderController.getAll);
+orderRouter.get("/total-sales", orderController.totalSales);
+orderRouter.get("/status", orderController.getByStatus);
 orderRouter.get("/:id", orderController.getOne);
 orderRouter.post("/", orderController.create);
 orderRouter.put("/:id", orderController.update);
 orderRouter.delete("/:id", orderController.remove);
+orderRouter.get("/", orderController.getAll);
 
 module.exports = orderRouter;
