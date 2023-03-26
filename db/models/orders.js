@@ -44,19 +44,9 @@ const orderSchema = new mongoose.Schema({
 orderSchema.set("toJSON", {
   virtuals: true
 });
-orderSchema.statics.calcTotal = (orders) => {
-  let sum = 0;
-  Object.values(orders).forEach((order) => {
-    const { items } = order;
-    Object.values(items).forEach((item) => {
-      const { price } = item.item;
-      const { quantity } = item;
-      const subtotal = price * quantity;
-      sum += subtotal;
-    });
-  });
-  return sum;
-};
+orderSchema.statics.calcTotal = (items) =>
+  items.reduce((total, item) => total + item.price * item.quantity, 0);
+
 // order model
 const Order = mongoose.model("Order", orderSchema);
 
@@ -102,9 +92,22 @@ const getByStatusAndDate = async (startDate, endDate, status) => {
   throw new Error();
 };
 
+const calcTotal = (orders) => {
+  let sum = 0;
+  orders.forEach((order) => {
+    const { items } = order;
+    items.forEach((item) => {
+      const { price } = item.item;
+      const { quantity } = item;
+      const subtotal = price * quantity;
+      sum += subtotal;
+    });
+  });
+  return sum;
+};
 const totalSales = async () => {
   const orders = await Order.find().populate("items.item");
-  const returnVal = Order.calcTotal(orders);
+  const returnVal = calcTotal(orders);
   return returnVal;
 };
 
@@ -114,14 +117,19 @@ const totalSalesByDate = async (startDate, endDate) => {
     .gte(startDate)
     .lte(endDate)
     .populate("items.item");
-
-  if (orders.length === 0) {
-    return "No orders matching dates provided";
-  }
-
-  const returnVal = Order.calcTotal(orders);
+  const returnVal = calcTotal(orders);
   return returnVal;
 };
+
+// const status = async (s) => {
+//   const doc = await Order.find().where("status").equals(s);
+//   return doc;
+// };
+
+// const statusByDate = async (startDate, endDate, s) => {
+//   const doc = await Order.find().where("status").equals(s);
+//   return doc;
+// };
 
 module.exports = {
   getAll,
@@ -133,5 +141,7 @@ module.exports = {
   getByStatusAndDate,
   totalSales,
   totalSalesByDate,
+  // status,
+  // statusByDate,
   Order
 };

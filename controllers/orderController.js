@@ -82,7 +82,7 @@ const totalSales = async (req, res) => {
     } else {
       total = await Order.totalSales();
     }
-    total = `${total}`;
+    total = {total};
     res.send(total);
   } catch (error) {
     res.status(500).send(error);
