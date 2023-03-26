@@ -44,9 +44,19 @@ const orderSchema = new mongoose.Schema({
 orderSchema.set("toJSON", {
   virtuals: true
 });
-orderSchema.statics.calcTotal = (items) =>
-  items.reduce((total, item) => total + item.price * item.quantity, 0);
-
+orderSchema.statics.calcTotal = (orders) => {
+  let sum = 0;
+  Object.values(orders).forEach((order) => {
+    const { items } = order;
+    Object.values(items).forEach((item) => {
+      const { price } = item.item;
+      const { quantity } = item;
+      const subtotal = price * quantity;
+      sum += subtotal;
+    });
+  });
+  return sum;
+};
 // order model
 const Order = mongoose.model("Order", orderSchema);
 
@@ -93,23 +103,24 @@ const getByStatusAndDate = async (startDate, endDate, status) => {
 };
 
 const totalSales = async () => {
-  const total = await Order.countDocuments();
-  return total;
+  const orders = await Order.find().populate("items.item");
+  const returnVal = Order.calcTotal(orders);
+  return returnVal;
 };
 
 const totalSalesByDate = async (startDate, endDate) => {
-  const doc = await Order.find().where("createdAt").gte(startDate).lte(endDate);
-  return doc;
-};
+  const orders = await Order.find()
+    .where("createdAt")
+    .gte(startDate)
+    .lte(endDate)
+    .populate("items.item");
 
-const status = async (s) => {
-  const doc = await Order.find().where("status").equals(s);
-  return doc;
-};
+  if (orders.length === 0) {
+    return "No orders matching dates provided";
+  }
 
-const statusByDate = async (startDate, endDate, s) => {
-  const doc = await Order.find().where("status").equals(s);
-  return doc;
+  const returnVal = Order.calcTotal(orders);
+  return returnVal;
 };
 
 module.exports = {
@@ -122,7 +133,5 @@ module.exports = {
   getByStatusAndDate,
   totalSales,
   totalSalesByDate,
-  status,
-  statusByDate,
   Order
 };
