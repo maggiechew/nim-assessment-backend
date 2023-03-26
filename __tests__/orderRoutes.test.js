@@ -98,7 +98,9 @@ describe("routes", () => {
   describe("GET /api/order/status?s=status", () => {
     it("should return an array of orders with the correct status", async () => {
       await Order.create(testOrder);
-      const response = await request(server).get("/api/orders/status?s=pending");
+      const response = await request(server).get(
+        "/api/orders/status?s=pending"
+      );
       expect(response.body).toBeInstanceOf(Array);
       expect(response.body[0].status).toBe("pending");
     });

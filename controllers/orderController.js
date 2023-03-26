@@ -59,17 +59,17 @@ const getByCustomer = async (req, res) => {
 };
 
 const getByStatus = async (req, res) => {
-  const {s, startDate, endDate} = req.query;
+  const { s, startDate, endDate } = req.query;
   let orders;
   try {
     if (startDate && endDate) {
-      orders = await Order.getByStatusAndDate(startDate, endDate,s);
+      orders = await Order.getByStatusAndDate(startDate, endDate, s);
     } else {
       orders = await Order.getByStatus(s);
     }
     res.send(orders);
   } catch (error) {
-    res.status(500).send({message: "No orders matching provided status."});
+    res.status(500).send({ message: "No orders matching provided status." });
   }
 };
 
@@ -82,7 +82,7 @@ const totalSales = async (req, res) => {
     } else {
       total = await Order.totalSales();
     }
-    total = {total};
+    total = { total };
     res.send(total);
   } catch (error) {
     res.status(500).send(error);

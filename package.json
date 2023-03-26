@@ -9,7 +9,7 @@
     "preload": "node db/preload-db",
     "pretty": "prettier --write .",
     "start": "node server.js",
-    "dev-start":"nodemon server.js"
+    "dev-start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
